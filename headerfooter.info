@@ -1,0 +1,3 @@
+name = Header Footer
+description = Only display header or footer DOM
+core = 7.x

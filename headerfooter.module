@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ *
+ *
+ */
+function headerfooter_menu() {
+
+  $items = array(
+    'include_header' => array(
+      'title' => "Header",
+      'type' => MENU_NORMAL_ITEM,
+      'page callback' => 'headerfooter_page_header',
+      'access arguments' => array('access content')
+    ),
+    'include_footer' => array(
+      'title' => "Footer",
+      'type' => MENU_NORMAL_ITEM,
+      'page callback' => 'headerfooter_page_footer',
+      'access arguments' => array('access content')
+    ),
+  );
+
+  return $items;
+
+}
+
+/*
+ * PAGES FUNCTIONS
+ */
+
+function headerfooter_page_header() {
+  return array();
+}
+
+function headerfooter_page_footer() {
+  return array();
+}
+
+/*
+ * PREPROCESS FUNCTIONS
+ */
+
+function headerfooter_preprocess_page(&$vars) {
+  $vars['printheader'] = TRUE;
+  $vars['printcontent'] = TRUE;
+  $vars['printfooter'] = TRUE;
+  if(arg(0) == 'include_header') {
+    $vars['printcontent'] = FALSE;
+    $vars['printfooter'] = FALSE;
+  }
+  else if(arg(0) == 'include_footer') {
+    $vars['printheader'] = FALSE;
+    $vars['printcontent'] = FALSE;
+  }
+}
+
+function headerfooter_preprocess_html(&$vars) {
+  $vars['printheader'] = TRUE;
+  $vars['printfooter'] = TRUE;
+  if(arg(0) == 'include_header') {
+    $vars['printfooter'] = FALSE;
+  }
+  else if(arg(0) == 'include_footer') {
+    $vars['printheader'] = FALSE;
+  }
+
+  if(arg(0) == 'include_header' || arg(0) == 'include_footer') {
+    // Make all links absolute
+    global $base_url;
+    $vars['page']['#children'] = str_replace('href="/', 'href="' . $base_url . '/', $vars['page']['#children']);
+    $vars['page']['#children'] = str_replace('src="/', 'src="' . $base_url . '/', $vars['page']['#children']);
+  }
+}
